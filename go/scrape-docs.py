@@ -1,5 +1,6 @@
 import json
 import sys
+import re
 
 from typing import Iterator, TypedDict
 
@@ -106,6 +107,49 @@ def parse(stdin: Iterator[str]) -> Iterator[JsonschemaType]:
             else:
                 current_obj["description"] += line
 
+def split_top_level(input_str, delimiter="|"):
+    parts = []
+    current = []
+    level_square = 0
+    level_paren = 0
+    in_quotes = False
+
+    i = 0
+    while i < len(input_str):
+        c = input_str[i]
+
+        if c == '"' and (i == 0 or input_str[i-1] != '\\'):
+            in_quotes = not in_quotes
+
+        elif not in_quotes:
+            if c == '[':
+                level_square += 1
+            elif c == ']':
+                if level_square > 0:
+                    level_square -= 1
+            elif c == '(':
+                level_paren += 1
+            elif c == ')':
+                if level_paren > 0:
+                    level_paren -= 1
+
+        if not in_quotes and level_square == 0 and level_paren == 0 and c == delimiter:
+            # Разделяем по верхнему уровню
+            part = "".join(current).strip()
+            parts.append(part)
+            current = []
+            i += 1
+            # Если delimiter - " | " с пробелами, пропускаем пробелы
+            while i < len(input_str) and input_str[i] == ' ':
+                i += 1
+            continue
+
+        current.append(c)
+        i += 1
+
+    if current:
+        parts.append("".join(current).strip())
+    return parts
 
 def parse_type(input: str) -> dict:
     input = (
@@ -134,6 +178,32 @@ def parse_type(input: str) -> dict:
         else:
             USED_OBJECTS.add(name)
             return {"$ref": f"#/definitions/{name}"}
+
+    if " | " in input:
+        parts = split_top_level(input, delimiter='|')
+        any_of = []
+        for part in parts:
+            # специальная обработка "env:variable" как строка с const pattern?
+            if part.startswith('"') and part.endswith('"'):
+                any_of.append({"const": part.strip('"')})
+            elif part.startswith("env:"):
+                # env:variable - считаем строкой
+                any_of.append({"type": "string"})
+            else:
+                any_of.append(parse_type(part))
+        return {"anyOf": any_of}
+
+    known_prefixes = ("[", "\\[", "true", "false", "bool", "map", '"', "a list of", "string", "object", "float number")
+    if not any(input.startswith(prefix) or input == prefix for prefix in known_prefixes) and input not in ("int", "number", "address", "address_port", "CIDR"):
+        print(f"Warning: Unrecognized type '{input}'", file=sys.stderr)
+
+    m = re.match(r'\[([^\]]+)\]\(#.*\)', input)
+    if m:
+        name = m.group(1)
+        if name in KNOWN_BAD_RESOLVES:
+            return {"type": "object"}
+        USED_OBJECTS.add(name)
+        return {"$ref": f"#/definitions/{name}"}
 
     if input in ("true", "false", "true | false", "bool"):
         return {"type": "boolean"}
@@ -171,6 +241,9 @@ def parse_type(input: str) -> dict:
 
     if input == "float number":
         return {"type": "number"}
+
+    if re.search(r"[а-яА-Я]", input):
+        return {}
 
     raise Exception(input)
 
