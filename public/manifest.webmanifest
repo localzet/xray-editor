@@ -1,0 +1,40 @@
+{
+    "name": "Xray Editor",
+    "short_name": "Xray Editor",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#161B23",
+    "lang": "ru",
+    "scope": "/",
+    "description": "Config Validator",
+    "theme_color": "#161B23",
+    "icons": [
+        {
+            "src": "pwa-64x64.png",
+            "sizes": "64x64",
+            "type": "image/png"
+        },
+        {
+            "src": "pwa-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "pwa-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "pwa-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "maskable-icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
