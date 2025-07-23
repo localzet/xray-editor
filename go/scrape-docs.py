@@ -181,8 +181,6 @@ def parse_type(input: str) -> dict:
             USED_OBJECTS.add(name)
             return {"$ref": f"#/definitions/{name}"}
 
-
-
     m = re.match(r'\[([^\]]+)\]\(#.*\)', input)
     if m:
         name = m.group(1)
@@ -252,7 +250,6 @@ def main():
         if name not in definitions:
             raise AssertionError(
                 f"Не удалось найти {name}, добавьте в KNOWN_BAD_RESOLVES")
-
 
     schema = {
         "$schema": "http://json-schema.org/draft-07/schema#",
