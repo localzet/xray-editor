@@ -181,23 +181,7 @@ def parse_type(input: str) -> dict:
             USED_OBJECTS.add(name)
             return {"$ref": f"#/definitions/{name}"}
 
-    # if " | " in input:
-    #     parts = split_top_level(input, delimiter='|')
-    #     any_of = []
-    #     for part in parts:
-    #         # специальная обработка "env:variable" как строка с const pattern?
-    #         if part.startswith('"') and part.endswith('"'):
-    #             any_of.append({"const": part.strip('"')})
-    #         elif part.startswith("env:"):
-    #             # env:variable - считаем строкой
-    #             any_of.append({"type": "string"})
-    #         else:
-    #             any_of.append(parse_type(part))
-    #     return {"anyOf": any_of}
 
-    # known_prefixes = ("[", "\\[", "true", "false", "bool", "map", '"', "a list of", "string", "object", "float number")
-    # if not any(input.startswith(prefix) or input == prefix for prefix in known_prefixes) and input not in ("int", "number", "address", "address_port", "CIDR"):
-    #     print(f"Warning: Unrecognized type '{input}'", file=sys.stderr)
 
     m = re.match(r'\[([^\]]+)\]\(#.*\)', input)
     if m:
@@ -269,11 +253,6 @@ def main():
             raise AssertionError(
                 f"Не удалось найти {name}, добавьте в KNOWN_BAD_RESOLVES")
 
-    #     schema = {
-    #         "$schema": "http://json-schema.org/draft-07/schema#",
-    #         "$ref": "#/definitions/Основные модули конфигурации",
-    #         "definitions": definitions
-    #     }
 
     schema = {
         "$schema": "http://json-schema.org/draft-07/schema#",
