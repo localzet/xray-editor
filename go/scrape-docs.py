@@ -231,7 +231,7 @@ def parse_type(input: str) -> dict:
     if input.startswith("a list of"):
         return {}
 
-    if input == "string array" or input == "array":
+    if input in ("string array", "array"):
         return {"type": "array", "items": {"type": "string"}}
 
     if input.startswith("string, any of"):
