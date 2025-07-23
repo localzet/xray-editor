@@ -263,7 +263,8 @@ def main():
             definitions[key] = definition
 
     for name in USED_OBJECTS:
-        assert name in definitions, f"Не удалось найти {name}, добавьте в KNOWN_BAD_RESOLVES"
+        if name not in definitions:
+            raise AssertionError(f"Не удалось найти {name}, добавьте в KNOWN_BAD_RESOLVES")
 
     #     schema = {
     #         "$schema": "http://json-schema.org/draft-07/schema#",
