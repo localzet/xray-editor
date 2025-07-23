@@ -107,6 +107,7 @@ def parse(stdin: Iterator[str]) -> Iterator[JsonschemaType]:
             else:
                 current_obj["description"] += line
 
+
 def split_top_level(input_str, delimiter="|"):
     parts = []
     current = []
@@ -150,6 +151,7 @@ def split_top_level(input_str, delimiter="|"):
     if current:
         parts.append("".join(current).strip())
     return parts
+
 
 def parse_type(input: str) -> dict:
     input = (
