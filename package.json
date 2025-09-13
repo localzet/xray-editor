@@ -29,7 +29,7 @@
     "@mantine/hooks": "^7.14.3",
     "@mantine/nprogress": "^7.12.2",
     "@monaco-editor/react": "^4.6.0",
-    "axios": "^1.7.9",
+    "axios": "^1.12.1",
     "consola": "^3.2.3",
     "dayjs": "^1.11.13",
     "motion": "^11.13.1",
